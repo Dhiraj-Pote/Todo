@@ -1,23 +1,42 @@
-import logo from './logo.svg';
-import './App.css';
+import { useState } from "react";
+import TodoForm from "./Components/TodoForm";
+import TodoList from "./Components/ToDoList";
+import { v4 as uuidv4 } from "uuid";
 
 function App() {
+  const [todos, setTodos] = useState([]);
+
+  const addTodo = (text) => {
+    const newTodo = {
+      key: uuidv4(), // Use a different approach to generate unique keys
+      task: text,
+      isComp: false
+    };
+    setTodos([...todos, newTodo]);
+  };
+
+  const checkTodo = (id) => {
+    setTodos((prevTodos) =>
+      prevTodos.map((todo) => {
+        if (todo.key === id) {
+          return {
+            ...todo,
+            isComp: !todo.isComp
+          };
+        }
+        return todo;
+      })
+    );
+  };
+
+  const delTodo = (id) => {
+    setTodos((prevTodos) => prevTodos.filter((todo) => todo.key !== id));
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <TodoForm addTodo={addTodo} />
+      <TodoList todos={todos} checkTodo={checkTodo} delTodo={delTodo} />
     </div>
   );
 }
